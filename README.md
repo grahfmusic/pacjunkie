@@ -1,6 +1,3 @@
-Here is the updated `README.md` file with an explanation of why password-less `pacman` commands are needed:
-
-```markdown
 # PacJunkie
 
 PacJunkie is a console application designed to help you manage Arch Linux package updates, including AUR and development packages. It provides a user-friendly interface to list available upgrades and perform updates with a retro 80s hacker theme.
