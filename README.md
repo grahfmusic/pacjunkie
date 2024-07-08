@@ -1,3 +1,6 @@
+Here is the updated `README.md` file with an explanation of why password-less `pacman` commands are needed:
+
+```markdown
 # PacJunkie
 
 PacJunkie is a console application designed to help you manage Arch Linux package updates, including AUR and development packages. It provides a user-friendly interface to list available upgrades and perform updates with a retro 80s hacker theme.
@@ -113,6 +116,40 @@ Parses and formats update logs.
 ### calculate_menu_height
 
 Calculates the menu height dynamically based on the number of items.
+
+## Configuration for Password-less Pacman Commands
+
+To allow users in the `wheel` group to run `pacman` commands without a password, follow these steps:
+
+1. Open the sudoers file with the `visudo` command:
+    ```bash
+    sudo visudo
+    ```
+
+2. Find the following line:
+    ```plaintext
+    %wheel ALL=(ALL:ALL) ALL
+    ```
+
+3. Change it to:
+    ```plaintext
+    %wheel ALL=(ALL:ALL) NOPASSWD: /usr/bin/pacman
+    ```
+
+4. Save and exit the editor.
+
+Additionally, ensure your user is in the `wheel` group. You can add your user to the group with the following command:
+```bash
+sudo usermod -aG wheel yourusername
+```
+
+Replace `yourusername` with your actual username.
+
+### Why Password-less Pacman Commands?
+
+To have an effective upgrade script that can run in the background, it's important to avoid constant password prompts. This ensures the script does not timeout due to waiting for a password input, which might happen if you forget to enter it in time. Configuring password-less `pacman` commands allows for a seamless and automated update process.
+
+After these steps, users in the `wheel` group will be able to execute `pacman` commands without being prompted for a password.
 
 ## License
 
