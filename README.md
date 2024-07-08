@@ -1,6 +1,8 @@
 # PacJunkie
-
 PacJunkie is a console application designed to help you manage Arch Linux package updates, including AUR and development packages. It provides a user-friendly interface to list available upgrades and perform updates with a retro 80s hacker theme.
+
+<img src="./img/1.png" width="49%"> <img src="./img/2.png" width="49%">
+<img src="./img/3.png" width="49%"> <img src="./img/4.png" width="49%">
 
 ## Features
 
@@ -163,6 +165,3 @@ Special thanks to the developers of `yay`, `dialog`, and `toilet` for their amaz
 ---
 
 Enjoy using PacJunkie! Feel free to reach out if you have any questions or feedback.
-```
-
-Feel free to copy this content into your `README.md` file.
