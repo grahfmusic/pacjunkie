@@ -14,11 +14,13 @@ PacJunkie is written in Bash scripting language, chosen for its robustness and e
 
 PacJunkie displays real-time progress updates during package upgrades using Dialog. This feature enhances user experience by providing immediate feedback on the upgrade process, ensuring transparency and user control over system updates.
 
-### Package Listing and Selection
+### List Available Upgrades
 
-- **List Available Upgrades**: Displays a detailed list of available upgrades for core system packages, AUR packages, and development packages. Users can view which packages have updates available and decide which packages to upgrade based on their preferences.
-  
-- **Selective Upgrades**: Offers options to upgrade specific categories of packages:
+- **Description**: Displays a categorized list of available upgrades for core system packages, AUR packages, and development packages. Users can view which packages have updates available and decide which packages to upgrade based on their preferences.
+
+### Selective Upgrades
+
+- **Description**: Offers options to upgrade specific categories of packages:
   - **Core System**: Upgrades essential system packages using Pacman.
   - **AUR Packages**: Upgrades user-contributed AUR packages using Yay.
   - **Development Packages**: Upgrades development-specific packages from the AUR using Yay.
@@ -49,12 +51,18 @@ To use PacJunkie, follow these steps:
    cd PacJunkie
    ```
 
-2. **Make the Script Executable**: Ensure the script has executable permissions.
+2. **Install Dependencies**: Ensure that the following dependencies are installed on your Arch Linux system:
+   ```bash
+   sudo pacman -S dialog toilet
+   yay -S yay # Install yay if not already installed
+   ```
+
+3. **Make the Script Executable**: Ensure the script has executable permissions.
    ```bash
    chmod +x pacjunkie.sh
    ```
 
-3. **Run PacJunkie**: Execute the script to launch the menu interface.
+4. **Run PacJunkie**: Execute the script to launch the menu interface.
    ```bash
    ./pacjunkie.sh
    ```
@@ -90,6 +98,3 @@ For questions, issues, or feature requests, please open an issue on the [GitHub 
 ---
 
 PacJunkie is designed to simplify and streamline the package management experience on Arch Linux systems, ensuring efficient and reliable updates tailored to user preferences and system requirements.
-```
-
-This expanded `README.md` file provides a comprehensive overview of PacJunkie, including detailed explanations of its features, installation instructions, usage guide, dependencies, license information, acknowledgments, and support resources. Adjustments can be made to fit specific details or additional information you may want to include.
