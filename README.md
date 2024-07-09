@@ -36,14 +36,14 @@ PacJunkie is a console application designed to help you manage Arch Linux packag
 
 3. Make the script executable:
     ```bash
-    chmod +x update.sh
+    chmod +x pacjunkie.sh
     ```
 
 ## Usage
 
 To start the application, simply run the script:
 ```bash
-./update.sh
+./pacjunkie.sh
 ```
 
 You will be presented with a menu where you can choose the desired action:
