@@ -1,167 +1,95 @@
 # PacJunkie
-PacJunkie is a console application designed to help you manage Arch Linux package updates, including AUR and development packages. It provides a user-friendly interface to list available upgrades and perform updates with a retro 80s hacker theme.
+PacJunkie is a Bash script designed to facilitate package management and upgrades on Arch Linux systems. It integrates with Pacman for managing core system updates and Yay for handling AUR (Arch User Repository) and development package updates. The script provides a user-friendly menu interface using Dialog, allowing users to interactively manage and upgrade their system packages.
 
 <img src="./img/1.png" width="49%"> <img src="./img/2.png" width="49%">
 <img src="./img/3.png" width="49%"> <img src="./img/4.png" width="49%">
 
+## Language Choice
+
+PacJunkie is written in Bash scripting language, chosen for its robustness and efficiency in handling system-level operations and scripting tasks. Bash scripting allows PacJunkie to leverage Linux command-line utilities effectively, ensuring compatibility and performance in managing Arch Linux package upgrades.
+
 ## Features
 
-- List available upgrades
-- Upgrade core system packages
-- Upgrade AUR packages
-- Upgrade development packages
-- Upgrade all packages
-- User-friendly terminal interface with centered text and animations
-- Real-time update progress display
-- Clean-up and signal handling
+### Real-time Updates
 
-## Requirements
+PacJunkie displays real-time progress updates during package upgrades using Dialog. This feature enhances user experience by providing immediate feedback on the upgrade process, ensuring transparency and user control over system updates.
 
-- `yay`: AUR helper for managing AUR packages
-- `dialog`: For creating terminal-based user interfaces
-- `toilet`: For creating ASCII art text
+### Package Listing and Selection
 
-## Installation
+- **List Available Upgrades**: Displays a detailed list of available upgrades for core system packages, AUR packages, and development packages. Users can view which packages have updates available and decide which packages to upgrade based on their preferences.
+  
+- **Selective Upgrades**: Offers options to upgrade specific categories of packages:
+  - **Core System**: Upgrades essential system packages using Pacman.
+  - **AUR Packages**: Upgrades user-contributed AUR packages using Yay.
+  - **Development Packages**: Upgrades development-specific packages from the AUR using Yay.
+  - **All Packages**: Upgrades all available packages, including core system, AUR, and development packages, in a single operation.
 
-1. Install the required dependencies:
-    ```bash
-    sudo pacman -S yay dialog toilet
-    ```
+### User-friendly Interface
 
-2. Clone the repository:
-    ```bash
-    git clone https://github.com/yourusername/pacjunkie.git
-    cd pacjunkie
-    ```
+PacJunkie utilizes Dialog to present a graphical menu interface within the terminal. This interface enhances usability by allowing users to navigate and select upgrade options easily. Dialog provides a consistent, intuitive experience for managing Arch Linux package upgrades directly from the command line.
 
-3. Make the script executable:
-    ```bash
-    chmod +x pacjunkie.sh
-    ```
+## Dependencies
 
-## Usage
+PacJunkie relies on several key dependencies for its operation:
 
-To start the application, simply run the script:
-```bash
-./pacjunkie.sh
-```
+- **Dialog**: Provides the framework for creating text-based graphical interfaces in the terminal.
+- **Toilet**: Used for generating ASCII art and stylized text, enhancing the visual presentation of the script's title screen.
+- **Tee and Tail**: Essential for managing output logs and displaying real-time updates during package upgrades.
+- **Pacman and Yay**: Core package managers for Arch Linux and the AUR, respectively. Pacman manages system packages, while Yay extends support for managing AUR packages, including development-specific updates.
 
-You will be presented with a menu where you can choose the desired action:
-1. List available upgrades
-2. Upgrade core system
-3. Upgrade AUR packages
-4. Upgrade development packages
-5. Upgrade all packages
-6. Quit
+## Installation and Usage
 
-## Functions
+### Installation
 
-### strip_ansi
+To use PacJunkie, follow these steps:
 
-Strips ANSI escape sequences from a given string.
+1. **Clone the Repository**: Clone the PacJunkie repository from GitHub.
+   ```bash
+   git clone https://github.com/grahfmusic/PacJunkie.git
+   cd PacJunkie
+   ```
 
-### cleanup
+2. **Make the Script Executable**: Ensure the script has executable permissions.
+   ```bash
+   chmod +x pacjunkie.sh
+   ```
 
-Cleans up temporary files and processes.
+3. **Run PacJunkie**: Execute the script to launch the menu interface.
+   ```bash
+   ./pacjunkie.sh
+   ```
 
-### abort_upgrade
+### Usage
 
-Handles the abort signal, cleans up, and exits the script.
+Upon running PacJunkie, users are presented with a menu offering various upgrade options:
 
-### get_dialog_size
+1. **List Available Upgrades**: Displays a categorized list of available package upgrades, including core system, AUR, and development packages.
 
-Calculates the dialog size based on terminal dimensions and specified percentages.
+2. **Upgrade Core System**: Initiates the upgrade process for core system packages using Pacman.
 
-### display_menu
+3. **Upgrade AUR Packages**: Upgrades user-contributed AUR packages using Yay.
 
-Displays the main menu using `dialog`.
+4. **Upgrade Development Packages**: Updates development-specific packages from the AUR using Yay.
 
-### center_text
+5. **Upgrade All Packages**: Upgrades all available packages, including core system, AUR, and development packages, in a single operation.
 
-Centers text in the terminal.
+6. **Quit**: Exits the PacJunkie script.
 
-### display_title
-
-Displays the title with animation using `toilet`.
-
-### display_realtime_output
-
-Displays real-time output of commands.
-
-### list_upgrades
-
-Lists available core, AUR, and development package upgrades.
-
-### upgrade_core
-
-Upgrades core system packages.
-
-### upgrade_aur
-
-Upgrades AUR packages.
-
-### upgrade_devel
-
-Upgrades development packages.
-
-### update_all
-
-Upgrades all packages (core, AUR, and development).
-
-### format_upgrade_log
-
-Parses and formats update logs.
-
-### calculate_menu_height
-
-Calculates the menu height dynamically based on the number of items.
-
-## Configuration for Password-less Pacman Commands
-
-To allow users in the `wheel` group to run `pacman` commands without a password, follow these steps:
-
-1. Open the sudoers file with the `visudo` command:
-    ```bash
-    sudo visudo
-    ```
-
-2. Find the following line:
-    ```plaintext
-    %wheel ALL=(ALL:ALL) ALL
-    ```
-
-3. Change it to:
-    ```plaintext
-    %wheel ALL=(ALL:ALL) NOPASSWD: /usr/bin/pacman
-    ```
-
-4. Save and exit the editor.
-
-Additionally, ensure your user is in the `wheel` group. You can add your user to the group with the following command:
-```bash
-sudo usermod -aG wheel yourusername
-```
-
-Replace `yourusername` with your actual username.
-
-### Why Password-less Pacman Commands?
-
-To have an effective upgrade script that can run in the background, it's important to avoid constant password prompts. This ensures the script does not timeout due to waiting for a password input, which might happen if you forget to enter it in time. Configuring password-less `pacman` commands allows for a seamless and automated update process.
-
-After these steps, users in the `wheel` group will be able to execute `pacman` commands without being prompted for a password.
-
-## License
+### License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-## Contributing
+### Acknowledgments
 
-Contributions are welcome! Please open an issue or submit a pull request for any changes or improvements.
+PacJunkie was developed by Grahf in 2024. Contributions and feedback are welcome via the GitHub repository at [github.com/grahfmusic/PacJunkie](https://github.com/grahfmusic/PacJunkie).
 
-## Acknowledgements
+## Support
 
-Special thanks to the developers of `yay`, `dialog`, and `toilet` for their amazing tools.
+For questions, issues, or feature requests, please open an issue on the [GitHub repository](https://github.com/grahfmusic/PacJunkie/issues).
 
 ---
 
-Enjoy using PacJunkie! Feel free to reach out if you have any questions or feedback.
+PacJunkie is designed to simplify and streamline the package management experience on Arch Linux systems, ensuring efficient and reliable updates tailored to user preferences and system requirements.
+```
+
+This expanded `README.md` file provides a comprehensive overview of PacJunkie, including detailed explanations of its features, installation instructions, usage guide, dependencies, license information, acknowledgments, and support resources. Adjustments can be made to fit specific details or additional information you may want to include.
