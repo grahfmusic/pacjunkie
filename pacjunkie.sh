@@ -43,7 +43,7 @@ get_dialog_size() {
 display_title() {
     clear
     local title
-    title=$(toilet --metal -f crawford "PacJunkie" && echo -e "\e[36mVersion\e[0m 0.4 :: \e[36mCreated by\e[0m Grahf 2024 :: \e[36mgithub.com\e[0m/grahfmusic\n\n")
+    title=$(toilet --metal -f crawford "PacJunkie" && echo -e "\e[36mVersion\e[0m 0.5 :: \e[36mCreated by\e[0m Grahf 2024 :: \e[36mgithub.com\e[0m/grahfmusic\n\n")
     IFS=$'\n' read -r -d '' -a title_lines <<<"$title"
     
     local term_width
@@ -215,6 +215,7 @@ display_progress_bar() {
 
 
 
+# Function to list upgrades
 list_upgrades() {
   # Initialize maximum lengths
   max_package_length=0
@@ -231,7 +232,11 @@ list_upgrades() {
   display_progress_bar "Checking for DEVEL Upgrades" "yay -Qu --devel" 4 $total_steps "/tmp/upgrade_devel"
 
   # Remove duplicates from devel that exist in core
-  awk 'NR==FNR {a[$1]; next} !($1 in a)' /tmp/upgrade_core /tmp/upgrade_devel > /tmp/upgrade_devel_filtered
+  if [ -s /tmp/upgrade_core ]; then
+    awk 'NR==FNR {a[$1]; next} !($1 in a)' /tmp/upgrade_core /tmp/upgrade_devel > /tmp/upgrade_devel_filtered
+  else
+    cp /tmp/upgrade_devel /tmp/upgrade_devel_filtered
+  fi
   mv /tmp/upgrade_devel_filtered /tmp/upgrade_devel
 
   # Calculate max lengths for all files
@@ -288,6 +293,7 @@ list_upgrades() {
   rm /tmp/upgrade_{core,aur,devel} /tmp/formatted_upgrades
 }
 
+
 # Function to update core system
 upgrade_core() {
   display_realtime_output "sudo pacman -Syu --noconfirm --overwrite '*'" "Upgrading Core System" "/tmp/core_upgrade_log"
@@ -300,7 +306,7 @@ upgrade_aur() {
 
 # Function to update development packages
 upgrade_devel() {
-  display_realtime_output "yay -Syu --devel --noconfirm --timeupdate --overwrite '*'" "Upgrading Development Packages" "/tmp/devel_upgrade_log"
+  display_realtime_output "yay -Syu --devel --noconfirm --timeupdate --rebuildall --overwrite '*'" "Upgrading Development Packages" "/tmp/devel_upgrade_log"
 }
 
 # Function to upgrade all packages
