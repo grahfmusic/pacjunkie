@@ -43,7 +43,7 @@ get_dialog_size() {
 display_title() {
     clear
     local title
-    title=$(toilet --metal -f crawford "PacJunkie" && echo -e "\e[36mVersion\e[0m 0.3 :: \e[36mCreated by\e[0m Grahf 2024 :: \e[36mgithub.com\e[0m/grahfmusic\n\n")
+    title=$(toilet --metal -f crawford "PacJunkie" && echo -e "\e[36mVersion\e[0m 0.4 :: \e[36mCreated by\e[0m Grahf 2024 :: \e[36mgithub.com\e[0m/grahfmusic\n\n")
     IFS=$'\n' read -r -d '' -a title_lines <<<"$title"
     
     local term_width
@@ -185,17 +185,50 @@ calculate_max_lengths() {
   done <"$1"
 }
 
+# Function to display progress bar
+display_progress_bar() {
+  local title="$1"
+  local cmd="$2"
+  local step="$3"
+  local total_steps="$4"
+  local logfile="$5"
+  local increment=$((100 / total_steps))
+
+  ( $cmd >"$logfile" 2>&1 ) &
+  PID=$!
+
+  (
+    progress=$((increment * (step - 1)))
+    while kill -0 $PID 2>/dev/null; do
+      echo $progress
+      progress=$((progress + 1))
+      if [ $progress -gt $((increment * step)) ]; then
+        progress=$((increment * step))
+      fi
+      sleep 1
+    done
+    echo $((increment * step))
+  ) | dialog --title "$title" --gauge "Please wait..." 0 40
+
+  wait $PID
+}
+
+
+
 list_upgrades() {
   # Initialize maximum lengths
   max_package_length=0
   max_current_version_length=0
   max_upgradable_version_length=0
 
-  # Use display_realtime_output to check for upgrades
-  display_realtime_output_nosize "sudo pacman -Sy" "Updated Repositories" "/tmp/updating_repos" 3 0
-  display_realtime_output_nosize "sudo pacman -Qu" "Checking for Core Upgrades" "/tmp/upgrade_core" 3 0
-  display_realtime_output_nosize "yay -Qua --aur" "Checking for AUR Upgrades" "/tmp/upgrade_aur" 3 0
-  display_realtime_output_nosize "yay -Qu --devel" "Checking for DEVEL Upgrades" "/tmp/upgrade_devel" 3 0
+  # Total steps for progress bar
+  total_steps=4
+
+  # Use display_progress_bar to check for upgrades with progress bar
+  display_progress_bar "Updating Repositories" "sudo pacman -Sy" 1 $total_steps "/tmp/updating_repos"
+  display_progress_bar "Checking for Core Upgrades" "sudo pacman -Qu" 2 $total_steps "/tmp/upgrade_core"
+  display_progress_bar "Checking for AUR Upgrades" "yay -Qua --aur" 3 $total_steps "/tmp/upgrade_aur"
+  display_progress_bar "Checking for DEVEL Upgrades" "yay -Qu --devel" 4 $total_steps "/tmp/upgrade_devel"
 
   # Remove duplicates from devel that exist in core
   awk 'NR==FNR {a[$1]; next} !($1 in a)' /tmp/upgrade_core /tmp/upgrade_devel > /tmp/upgrade_devel_filtered
