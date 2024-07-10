@@ -231,13 +231,19 @@ list_upgrades() {
   display_progress_bar "Checking for AUR Upgrades" "yay -Qua --aur" 3 $total_steps "/tmp/upgrade_aur"
   display_progress_bar "Checking for DEVEL Upgrades" "yay -Qu --devel" 4 $total_steps "/tmp/upgrade_devel"
 
-  # Remove duplicates from devel that exist in core
+  # Remove duplicates from devel that exist in core and aur
   if [ -s /tmp/upgrade_core ]; then
     awk 'NR==FNR {a[$1]; next} !($1 in a)' /tmp/upgrade_core /tmp/upgrade_devel > /tmp/upgrade_devel_filtered
   else
     cp /tmp/upgrade_devel /tmp/upgrade_devel_filtered
   fi
-  mv /tmp/upgrade_devel_filtered /tmp/upgrade_devel
+
+  if [ -s /tmp/upgrade_aur ]; then
+    awk 'NR==FNR {a[$1]; next} !($1 in a)' /tmp/upgrade_aur /tmp/upgrade_devel_filtered > /tmp/upgrade_devel_filtered2
+  else
+    cp /tmp/upgrade_devel_filtered /tmp/upgrade_devel_filtered2
+  fi
+  mv /tmp/upgrade_devel_filtered2 /tmp/upgrade_devel
 
   # Calculate max lengths for all files
   calculate_max_lengths "/tmp/upgrade_core"
@@ -292,6 +298,7 @@ list_upgrades() {
   # Clean up
   rm /tmp/upgrade_{core,aur,devel} /tmp/formatted_upgrades
 }
+
 
 
 # Function to update core system
