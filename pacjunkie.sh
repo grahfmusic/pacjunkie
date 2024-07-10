@@ -43,7 +43,7 @@ get_dialog_size() {
 display_title() {
     clear
     local title
-    title=$(toilet --metal -f crawford "PacJunkie" && echo -e "\e[36mVersion\e[0m 0.2 :: \e[36mCreated by\e[0m Grahf 2024 :: \e[36mgithub.com\e[0m/grahfmusic\n\n")
+    title=$(toilet --metal -f crawford "PacJunkie" && echo -e "\e[36mVersion\e[0m 0.3 :: \e[36mCreated by\e[0m Grahf 2024 :: \e[36mgithub.com\e[0m/grahfmusic\n\n")
     IFS=$'\n' read -r -d '' -a title_lines <<<"$title"
     
     local term_width
@@ -72,7 +72,6 @@ display_title() {
     
     read -rsn1
 }
-
 
 # Function to display menu using dialog
 display_menu() {
@@ -198,6 +197,10 @@ list_upgrades() {
   display_realtime_output_nosize "yay -Qua --aur" "Checking for AUR Upgrades" "/tmp/upgrade_aur" 3 0
   display_realtime_output_nosize "yay -Qu --devel" "Checking for DEVEL Upgrades" "/tmp/upgrade_devel" 3 0
 
+  # Remove duplicates from devel that exist in core
+  awk 'NR==FNR {a[$1]; next} !($1 in a)' /tmp/upgrade_core /tmp/upgrade_devel > /tmp/upgrade_devel_filtered
+  mv /tmp/upgrade_devel_filtered /tmp/upgrade_devel
+
   # Calculate max lengths for all files
   calculate_max_lengths "/tmp/upgrade_core"
   calculate_max_lengths "/tmp/upgrade_aur"
@@ -211,13 +214,13 @@ list_upgrades() {
   dialog_width=$dialog_width
 
   # Calculate total width for the separator line
-  total_width=$((max_package_length + max_current_version_length + max_upgradable_version_length + 2)) # Add two spaces for separation
+  total_width=$((max_package_length + max_current_version_length + max_upgradable_version_length + 4)) # Add four spaces for separation
 
   # Create the header
   header="\n\n"
   header+="Package$(printf ' %.0s' $(seq 1 $((max_package_length - 7))))"
-  header+="Current Version$(printf ' %.0s' $(seq 1 $((max_current_version_length - 14))))"
-  header+="Upgradable Version"
+  header+=" Current Version$(printf ' %.0s' $(seq 1 $((max_current_version_length - 15))))"
+  header+=" Upgradable Version"
 
   # Format and display upgrades using dialog
   {
@@ -236,8 +239,16 @@ list_upgrades() {
 
   center_block "$dialog_width" "$total_width" </tmp/formatted_upgrades >/tmp/centered_upgrades
 
-  # Show updates using whiptail
+  # Show updates 
   get_dialog_size
+
+  # Get the actual height of the centered upgrades content
+  actual_height=$(wc -l < /tmp/centered_upgrades)
+  padded_height=$((actual_height + 6))
+  if [[ $padded_height -lt $dialog_height ]]; then
+    dialog_height=$padded_height
+  fi
+
   dialog --title "Available Upgrades" --textbox /tmp/centered_upgrades $dialog_height $dialog_width
 
   # Clean up
