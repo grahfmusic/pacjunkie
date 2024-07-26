@@ -1,4 +1,5 @@
 # PacJunkie
+
 PacJunkie is a Bash script designed to facilitate package management and upgrades on Arch Linux systems. It integrates with Pacman for managing core system updates and Yay for handling AUR (Arch User Repository) and development package updates. The script provides a user-friendly menu interface using Dialog, allowing users to interactively manage and upgrade their system packages.
 
 <img src="./img/1.png" width="49%"> <img src="./img/2.png" width="49%">
@@ -67,6 +68,22 @@ To use PacJunkie, follow these steps:
    ./pacjunkie.sh
    ```
 
+### Configuration for Password-less Operation
+
+To make `pacman` and `makepkg` not ask for a password when using PacJunkie, follow these steps:
+
+1. **Edit Sudoers File**: Add the following lines to your sudoers file. You can edit the sudoers file using `visudo` to ensure syntax correctness.
+   ```bash
+   sudo visudo
+   ```
+   
+2. **Add the Following Lines**: Append the following lines to allow `pacman` and `makepkg` to run without requiring a password. Replace `your_username` with your actual username.
+   ```
+   your_username ALL=(ALL) NOPASSWD: /usr/bin/pacman
+   ```
+
+3. **Save and Exit**: Save the changes and exit the editor. This configuration will allow `pacman` and `makepkg` to run without prompting for a password when executed by the specified user.
+
 ### Usage
 
 Upon running PacJunkie, users are presented with a menu offering various upgrade options:
@@ -83,11 +100,11 @@ Upon running PacJunkie, users are presented with a menu offering various upgrade
 
 6. **Quit**: Exits the PacJunkie script.
 
-### License
+## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-### Acknowledgments
+## Acknowledgments
 
 PacJunkie was developed by Grahf in 2024. Contributions and feedback are welcome via the GitHub repository at [github.com/grahfmusic/PacJunkie](https://github.com/grahfmusic/PacJunkie).
 
