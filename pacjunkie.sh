@@ -43,7 +43,7 @@ get_dialog_size() {
 display_title() {
     clear
     local title
-    title=$(toilet --metal -f crawford "PacJunkie" && echo -e "\e[36mVersion\e[0m 0.4 :: \e[36mCreated by\e[0m Grahf 2024 :: \e[36mgithub.com\e[0m/grahfmusic\n\n")
+    title=$(toilet --metal -f crawford "PacJunkie" && echo -e "\e[36mVersion\e[0m 0.5 :: \e[36mCreated by\e[0m Grahf 2024 :: \e[36mgithub.com\e[0m/grahfmusic\n\n")
     IFS=$'\n' read -r -d '' -a title_lines <<<"$title"
     
     local term_width
@@ -129,39 +129,32 @@ display_realtime_output() {
 }
 
 # Function to display realtime output
-display_realtime_output_nosize() {
+display_realtime_output() {
   local cmd="$1"
   local title="$2"
   local logfile="$3"
-  local dialog_height="$4"
-  local dialog_width="$5"
 
   get_dialog_size
-  mkfifo /tmp/fifo
 
-  # Set trap for abort signal
-  trap 'abort_upgrade' SIGUSR1
+  # Create a temporary file for the command output
+  output_file=$(mktemp)
 
-  # Run the command, strip ANSI escape sequences, and feed the output to dialog
-  $cmd > >(tee /tmp/fifo >"$logfile") 2>&1 &
+  # Run the command and strip ANSI escape sequences, writing to the temporary file
+  $cmd > >(tee -a "$logfile" | sed -u -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" > "$output_file") 2>&1 &
   PID=$!
 
-  tail -f /tmp/fifo | dialog --title "$title" --no-ok --no-kill --programbox "$4" "$5" &
-  DIALOG_PID=$!
+  # Use tail -f to feed the output to dialog --programbox
+  ( tail -f "$output_file" & ) | while read -r line; do
+    echo "$line" | fold -s -w "$dialog_width"
+  done | dialog --title "$title" --programbox "$dialog_height" "$dialog_width"
 
-  while kill -0 $PID 2>/dev/null; do
-    read -rsn1 -t 1 key
-    if [[ $key == "A" || $key == "a" ]]; then
-      kill -SIGUSR1 $$
-    fi
-  done
-
+  # Wait for the command to complete
   wait $PID
-  rm /tmp/fifo
-  kill $DIALOG_PID >/dev/null 2>&1
+
+  # Clean up
+  rm "$output_file"
   clear
 }
-
 # Function to center a block of text within a given width
 center_block() {
   local total_width="$1"
@@ -295,7 +288,7 @@ upgrade_core() {
 
 # Function to update AUR packages
 upgrade_aur() {
-  display_realtime_output "yay -Sua --aur --noconfirm --overwrite '*'" "Upgrading AUR Packages" "/tmp/aur_upgrade_log"
+  display_realtime_output "yay -Sua --aur --mflags --skipinteg --noconfirm --overwrite '*'" "Upgrading AUR Packages" "/tmp/aur_upgrade_log"
 }
 
 # Function to update development packages
@@ -306,7 +299,7 @@ upgrade_devel() {
 # Function to upgrade all packages
 update_all() {
   display_realtime_output "sudo pacman -Syu --noconfirm --overwrite '*'" "Upgrading Core Packages" "/tmp/core_upgrade_log"
-  display_realtime_output "yay -Sua --aur --noconfirm --overwrite '*'" "Upgrading AUR Packages" "/tmp/aur_upgrade_log"
+  display_realtime_output "yay -Sua --aur --mflags --skipinteg --noconfirm --overwrite '*'" "Upgrading AUR Packages" "/tmp/aur_upgrade_log"
   display_realtime_output "yay -Syu --devel --noconfirm --timeupdate --overwrite '*'" "Upgrading Development Packages" "/tmp/devel_upgrade_log"
 }
 
