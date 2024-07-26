@@ -208,6 +208,7 @@ display_progress_bar() {
 
 
 
+# Function to list upgrades
 list_upgrades() {
   # Initialize maximum lengths
   max_package_length=0
@@ -223,9 +224,19 @@ list_upgrades() {
   display_progress_bar "Checking for AUR Upgrades" "yay -Qua --aur" 3 $total_steps "/tmp/upgrade_aur"
   display_progress_bar "Checking for DEVEL Upgrades" "yay -Qu --devel" 4 $total_steps "/tmp/upgrade_devel"
 
-  # Remove duplicates from devel that exist in core
-  awk 'NR==FNR {a[$1]; next} !($1 in a)' /tmp/upgrade_core /tmp/upgrade_devel > /tmp/upgrade_devel_filtered
-  mv /tmp/upgrade_devel_filtered /tmp/upgrade_devel
+  # Remove duplicates from devel that exist in core and aur
+  if [ -s /tmp/upgrade_core ]; then
+    awk 'NR==FNR {a[$1]; next} !($1 in a)' /tmp/upgrade_core /tmp/upgrade_devel > /tmp/upgrade_devel_filtered
+  else
+    cp /tmp/upgrade_devel /tmp/upgrade_devel_filtered
+  fi
+
+  if [ -s /tmp/upgrade_aur ]; then
+    awk 'NR==FNR {a[$1]; next} !($1 in a)' /tmp/upgrade_aur /tmp/upgrade_devel_filtered > /tmp/upgrade_devel_filtered2
+  else
+    cp /tmp/upgrade_devel_filtered /tmp/upgrade_devel_filtered2
+  fi
+  mv /tmp/upgrade_devel_filtered2 /tmp/upgrade_devel
 
   # Calculate max lengths for all files
   calculate_max_lengths "/tmp/upgrade_core"
@@ -281,6 +292,8 @@ list_upgrades() {
   rm /tmp/upgrade_{core,aur,devel} /tmp/formatted_upgrades
 }
 
+
+
 # Function to update core system
 upgrade_core() {
   display_realtime_output "sudo pacman -Syu --noconfirm --overwrite '*'" "Upgrading Core System" "/tmp/core_upgrade_log"
@@ -293,7 +306,7 @@ upgrade_aur() {
 
 # Function to update development packages
 upgrade_devel() {
-  display_realtime_output "yay -Syu --devel --noconfirm --timeupdate --overwrite '*'" "Upgrading Development Packages" "/tmp/devel_upgrade_log"
+  display_realtime_output "yay -Syu --devel --noconfirm --timeupdate --rebuildall --overwrite '*'" "Upgrading Development Packages" "/tmp/devel_upgrade_log"
 }
 
 # Function to upgrade all packages
