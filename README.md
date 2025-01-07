@@ -1,6 +1,6 @@
 # PacJunkie
 
-PacJunkie is a Bash script designed to facilitate package management and upgrades on Arch Linux systems. It integrates with Pacman for managing core system updates and Yay for handling AUR (Arch User Repository) and development package updates. The script provides a user-friendly menu interface using Dialog, allowing users to interactively manage and upgrade their system packages.
+PacJunkie is a Bash script designed to facilitate package management and upgrades on Arch Linux systems. It integrates with Pacman for managing core system updates and Yay for handling AUR (Arch User Repository) along with (devel) development package updates. The script provides a user-friendly menu interface using Dialog, allowing users to interactively manage and upgrade their system packages.
 
 <img src="./img/1.png" width="49%"> <img src="./img/2.png" width="49%">
 <img src="./img/3.png" width="49%"> <img src="./img/4.png" width="49%">
@@ -17,26 +17,26 @@ PacJunkie displays real-time progress updates during package upgrades using Dial
 
 ### List Available Upgrades
 
-- **Description**: Displays a categorized list of available upgrades for core system packages, AUR packages, and development packages. Users can view which packages have updates available and decide which packages to upgrade based on their preferences.
+- **Description**: Displays a categorised list of available upgrades for core system packages, AUR packages, and development packages. Users can view which packages have updates available and decide which packages to upgrade based on their preferences.
 
 ### Selective Upgrades
 
 - **Description**: Offers options to upgrade specific categories of packages:
   - **Core System**: Upgrades essential system packages using Pacman.
   - **AUR Packages**: Upgrades user-contributed AUR packages using Yay.
-  - **Development Packages**: Upgrades development-specific packages from the AUR using Yay.
+  - **Development Packages**: Upgrades (devel) development-specific packages from the AUR using Yay.
   - **All Packages**: Upgrades all available packages, including core system, AUR, and development packages, in a single operation.
 
 ### User-friendly Interface
 
-PacJunkie utilizes Dialog to present a graphical menu interface within the terminal. This interface enhances usability by allowing users to navigate and select upgrade options easily. Dialog provides a consistent, intuitive experience for managing Arch Linux package upgrades directly from the command line.
+PacJunkie utilises Dialog to present a graphical menu interface within the terminal. This interface enhances usability by allowing users to navigate and select upgrade options easily. Dialog provides a consistent, intuitive experience for managing Arch Linux package upgrades directly from the command line.
 
 ## Dependencies
 
 PacJunkie relies on several key dependencies for its operation:
 
 - **Dialog**: Provides the framework for creating text-based graphical interfaces in the terminal.
-- **Toilet**: Used for generating ASCII art and stylized text, enhancing the visual presentation of the script's title screen.
+- **Toilet**: Used for generating ASCII art and stylised text, enhancing the visual presentation of the script's title screen.
 - **Tee and Tail**: Essential for managing output logs and displaying real-time updates during package upgrades.
 - **Pacman and Yay**: Core package managers for Arch Linux and the AUR, respectively. Pacman manages system packages, while Yay extends support for managing AUR packages, including development-specific updates.
 
@@ -88,7 +88,7 @@ To make `pacman` and `makepkg` not ask for a password when using PacJunkie, foll
 
 Upon running PacJunkie, users are presented with a menu offering various upgrade options:
 
-1. **List Available Upgrades**: Displays a categorized list of available package upgrades, including core system, AUR, and development packages.
+1. **List Available Upgrades**: Displays a categorised list of available package upgrades, including core system, AUR, and development packages.
 
 2. **Upgrade Core System**: Initiates the upgrade process for core system packages using Pacman.
 
